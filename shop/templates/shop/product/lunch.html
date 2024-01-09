@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<div class="container">
+  <selection class="free-or-lunch">
+    <a class="btn btn-light free-menu" href="{% url 'shop:product_list' %}">
+      Свободное меню
+    </a>
+    <a class="btn btn-light free-menu" href="{% url 'shop:lunch' day=1 %}">
+      Бизнес ланч
+    </a>
+  </selection>
+  <div class="current-cart-items-title">
+    Бизнес-ланч  на {{cur_date}}
+    <a class="btn btn-info btn-block" id="lunchDateSelection" data-bs-toggle="dropdown" aria-expanded="false" href="{% url 'shop:lunch' day=1 %}">
+      <div class="check-title">Выбрать дату:</div>
+    </a>
+    <selection class="dropdown-menu" id="lunchDateDropdown" name="lunchDateDropdown">
+      {% for ind, date in dates %}
+        <li><a class="dropdown-item" href="{% url 'shop:lunch' day=ind %}">{{ date }}</a></li>
+      {% endfor %}
+    </selection>
+  </div>
+  <div class="row choice-soups">
+    <script>
+      function toggleActiveState(button) {
+        console.log(button.getAttribute("data-id"));
+
+        var row = button.closest('.row');
+        var buttons = row.querySelectorAll('.btn-outline-success');
+        buttons.forEach(function (btn) {
+          btn.classList.remove('btn-active');
+          btn.innerHTML = "Выбрать"
+          button.value = 1
+        });
+        button.innerHTML = "Выбрано"
+        button.classList.add('btn-active');
+      }
+
+      function addToCart(act) {
+          const selectedPositions = document.querySelectorAll(".btn.btn-active");
+          const positionsIndex = [...selectedPositions].map((pos) => {
+            return pos.getAttribute("data-id");
+          });
+          const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+          fetch("/lunch_products/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": csrfToken,
+            },
+            body: JSON.stringify({
+              selectedPositions: positionsIndex,
+            }),
+          })
+        }
+    </script>
+
+
+    <style>
+      .btn-active {
+        background-color: green;
+        color: white;
+      }
+    </style>
+    
+    {% for name, category in categories %}
+    <div class="row">
+      {% for pos in category %}
+      {% with product=pos.product %}
+      {% include 'shop\product\more_about_lunch.html'%}
+      <div class="col card mb-4 shadow-sm">
+        <div class="name-category" style="font-size: 1.15rem; font-weight: 500; margin: 10px;">{{name}}</div>
+        <img class="card-img-top" src="{{product.image.url }}"
+          style="--size: 250px; aspect-ratio: 1.00; width: var(--size); margin: auto; display: block;"
+          alt="изображение продукта">
+        <div class="card-body">
+         
+          <h5 class="card-title">{{product.name}}</h5>
+          <h6 class="card_price">{{product.price}} ₽</h6>
+          <button type="button" class="btn btn-success" data-bs-toggle="modal"
+            data-bs-target="#{{ product.slug }}-lunch-form" id="{{ product.slug }}-lunch-btn" ;>
+            <div class="user-login">Подробнее</div>
+          </button>
+          {% if day == 1 %}
+          <button type="button" class="btn btn-outline-success user-login" id="{{ product.slug }}" ;
+            onclick="toggleActiveState(this)" data-id="{{product.id}}">
+            Выбрать
+          </button>
+          {% endif %}
+        </div>
+      </div>
+      {% endwith %}
+      {% endfor %}
+    </div>
+    {% endfor %}
+  </div>
+
+
+  <div class="col p-2">
+    {% if day == 1 %}
+    {% if user.is_authenticated %}
+    <form role="form" method="POST" action="{% url 'cart:business_detail' %}">
+      {% csrf_token %}
+      <button type="submit" onclick="addToCart()" class="btn btn-outline-success btn-block btn-lg" ;>
+        <div>Добавить в корзину</div>
+      </button>
+    </form>
+    {% else %}
+    <button type="button" data-bs-toggle="modal" data-bs-target="#NotAuthorized" data-bs-dismiss="modal"
+      class="btn btn-outline-success btn-block btn-lg" ;>
+      <div>Добавить в корзину</div>
+    </button>
+    {% endif %}
+    {% endif %}
+  </div>
+
+
+
+
+</div>
+{% endblock %}

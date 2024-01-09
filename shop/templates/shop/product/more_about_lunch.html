@@ -1,0 +1,59 @@
+{% load static %}
+<div id="{{ product.slug }}-lunch-form" class="modal fade">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Подробнее</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+      </div>
+      <div class="modal-body">
+        <div>
+          <div class="row">
+            <script>
+              function increaseValue(inputId) {
+                var currentValue = parseInt(document.getElementById(inputId).value);
+                document.getElementById(inputId).value = currentValue + 1;
+              }
+          
+              function decreaseValue(inputId) {
+                var currentValue = parseInt(document.getElementById(inputId).value);
+                if (currentValue > 1){
+                document.getElementById(inputId).value = currentValue - 1;
+                }
+              }
+            </script>
+
+              <img src="{{ product.image.url }}" alt="" style="width: 100%">
+              <div class="modal-name-of-product-title">{{ product.name }}
+                {{product.star_rating}}
+                <img src="{% static 'admin\img\star.svg' %}"/>
+              </div>
+              <div class="modal-cplc-title">
+                {{ product.clpc }}
+              </div>
+              <h6 style="border: 0px; margin-bottom: 1px;">Цена</h6>
+              <div class="modal-price-title">
+                  {{ product.price }} ₽ 
+              </div>
+              <div class="modal-description-title">
+                  {{ product.description | safe }}
+              </div>
+            <div class="comments-container" style="margin-top: 10px;">
+              <div class="comments">
+                {% for comment in comments %}
+                  {% if comment.product == product %}
+                    <div class="comment">
+                      <p><strong>{{ comment.user }}</strong>: {{ comment.description }}
+                      {{comment.star_rating}}<img src="{% static 'admin\img\star.svg' %}"/></p>
+                    </div>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

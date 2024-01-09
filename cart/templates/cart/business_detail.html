@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container">
+    <div id="content" class="container">
+    <div class="album">
+      <div class="container">
+        <span class="badge pull-right">
+          {% with total_items=cart|length %}
+            {% if total_items > 0 %}
+                <div class="current-cart-items-title">
+                    Список позиций ланча:
+                </div>
+              {% else %}
+              <div class="current-cart-items-title">
+                Список позиций ланча:
+                  </div>
+              {% endif %}
+          {% endwith %}
+        </span> 
+        <table class="table">
+          <thead>
+          <tr>
+            <th scope="col">Изображение</th>
+            <th scope="col">Товар в ланче</th>
+          </tr>
+          </thead>
+          <tbody>
+            {% for product in cart %}
+                <tr>
+                  <th scope="row">
+                    <img src="{% if product.image %} {{ product.image.url }} {% else %} {% static 'img/default.jpg' %} {% endif %}" alt="..." style="height: 130px; width: auto">
+                  </th>
+                  <td>{{ product.name }}</td>
+                </tr>
+            {% endfor %}
+            <tr>
+              <td><b>Суммарная стоимость ланча:</b></td>
+              <td colspan="4"></td>
+              <td colspan="num"><b> 249 ₽</b></td>
+            </tr>
+          </tbody>
+        </table>
+       </div>
+    </div>
+
+    <div class="row">
+      <div class="col p-2">
+        <a class="btn btn-outline-warning btn-block btn-lg"  data-bs-toggle="modal"
+        data-bs-target="#orderConfirm" id="businessConfirm-btn">Оформить заказ</a>
+      </div>
+      {% include 'orders\order\create.html'%}
+    </div>
+  </div>
+</div>
+{% endblock %}

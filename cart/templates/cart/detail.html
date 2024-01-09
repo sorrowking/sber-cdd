@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container">
+    <div id="content" class="container">
+    <div class="album">
+      <div class="container">
+        <span class="badge pull-right">
+          {% with total_items=cart|length %}
+            {% if total_items > 0 %}
+                  <div class="current-cart-items-title">
+                      Текущий список позиций:
+                  </div>
+              {% else %}
+              <div class="current-cart-items-title">
+                      Текущий список позиций:
+                  </div>
+                  Вы пока ничего не выбрали...
+              {% endif %}
+          {% endwith %}
+        </span> 
+        <table class="table">
+          <thead>
+          <tr>
+            <th scope="col">Изображение</th>
+            <th scope="col">Товар</th>
+            <th scope="col">Кол-во</th>
+            <th scope="col">Удалить</th>
+            <th scope="col">Цена одного товара</th>
+            <th scope="col">Сумма</th>
+          </tr>
+          </thead>
+          <tbody>
+            {% for item in cart %}
+              {% with product=item.product  %}
+                <tr>
+                  <th scope="row">
+                    <a href="{{ product.get__absolute_url }}">
+                      <img src="{% if product.image %} {{ product.image.url }} {% else %} {% static 'img/default.jpg' %} {% endif %}" alt="..." style="height: 130px; width: auto">
+                    </a>
+                  </th>
+                  <td>{{ product.name }}</td>
+                  <td>
+                  <form action="{% url "cart:in_cart_add" product.id %}" method="post">
+                    {% csrf_token %}
+                    <span style="display:inline-block">    
+                      {{ item.update_quantity_form.quantity }}
+                      {{ item.update_quantity_form.update }}
+                      <input type="submit" value="Изменить" class="btn btn-outline-success" style="margin-top:10%; white-space: pre-line;">
+                    </span>
+                  </form>
+                  </td>
+                  <td>
+                    <a href="{% url "cart:cart_remove" product.id %}" style="width: 100%; font-size: 10pt;" 
+                    class="btn btn-outline-danger btn-block btn-lg">Удалить</a>
+                  </td>
+                  <td> {{ item.price }} ₽</td>
+                  <td> {{ item.total_price }} ₽</td>
+                </tr>
+              {% endwith %}
+            {% endfor %}
+            <tr>
+              <td><b>Суммарная стоимость:</b></td>
+              <td colspan="4"></td>
+              <td colspan="num"><b> {{ cart.get_total_price }} ₽</b></td>
+            </tr>
+          </tbody>
+        </table>
+       </div>
+    </div>
+        
+    <div class="row">
+      <div class="col p-2">
+          <a href="{% url "shop:product_list" %}" class="btn btn-outline-success btn-block btn-lg">Добавить еще</a>
+      </div>
+    </div>
+    {% if cart|length > 0 %}
+      <div class="row">
+        <div class="col p-2">
+          <a class="btn btn-outline-warning btn-block btn-lg"  data-bs-toggle="modal"
+          data-bs-target="#orderConfirm" id="orderConfirm--btn">Оформить заказ</a>
+        </div>
+        {% include 'orders\order\create.html'%}
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

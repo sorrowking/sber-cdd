@@ -1,0 +1,85 @@
+{% extends 'staff/choose_category.html' %}
+{% load static %}
+{% block content %}
+
+
+<div class="container">
+  <div class="row">
+    <ul class="table-showcase">
+      <li>
+        <div class="table-seat"></div>
+        <small>Доступные</small>
+      </li>
+      <li>
+        <div class="table-seat" style="background-color: var(--table-selected-color);"></div>
+        <small>Выбранные</small>
+      </li>
+      <li>
+        <div class="table-seat" style="background-color: grey;"></div>
+        <small>Скрытые</small>
+      </li>
+    </ul>
+
+    <div class="form-row">
+      <div class="col" style="margin-bottom: 10px; font-weight: 500;">Номер стола</div>
+
+      <script>
+        function updateResults(act) {
+          const selectedSeats = document.querySelectorAll(".row .table-seat.selected");
+          const seatsIndex = [...selectedSeats].map((seat) => {
+            return seat.getAttribute("data-id");
+          });
+          const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+          fetch("/staff/set_tables/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": csrfToken,
+            },
+            body: JSON.stringify({
+              selectedSeats: seatsIndex,
+              action: act,
+            }),
+          })
+        }
+      </script>
+
+      <div class="col"><input class="cool-input" id="selectedTableNum" type="number" readonly /></div>
+    </div>
+    <input class="form-control" id="selectedTableId" type="number" hidden />
+
+    <div class="row-center">
+      <div class="table-container">
+        {% for row in cafeteria.rows|get_natural_range %}
+
+        <div class="row">
+          {% for table in tables %}
+          {% if table.row == row and not table.hidden%}
+          <div class="table-seat" data-value="{{table.number}}" data-id="{{table.id}}"></div>
+          {% elif table.row == row %}
+          <div class="table-seat" style="background-color: grey" data-value="{{table.number}}" data-id="{{table.id}}">
+          </div>
+          {% endif %}
+          {% endfor %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    <form role="form" method="POST">
+      {% csrf_token %}
+      <div class="row">
+        <label for="cafe-rows"> Кол-во рядов столиков в столовой </label>
+        <input class="cool-input" id="cafe_rows" name="cafe_rows" type="number" value="{{ cafeteria.rows }}">
+        <label for="cafe-cols"> Кол-во столбцов столиков в столовой </label>
+        <input class="cool-input" id="cafe_cols" name="cafe_cols" type="number" value="{{ cafeteria.cols }}">
+      </div>
+      <button type="submit" class="btn btn-danger" id="tableSeatSelect" onclick="updateResults('HIDE')"
+        style="margin-bottom: 5px;">Скрыть</button>
+      <button type="submit" class="btn btn-success" id="tableSeatSelect"
+        onclick="updateResults('SHOW')">Показать</button>
+    </form>
+    <script src="{% static 'js\table-edit.js' %}"></script>
+  </div>
+</div>
+
+{% endblock %}

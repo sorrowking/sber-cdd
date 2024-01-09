@@ -1,0 +1,173 @@
+<!-- Modal HTML Markup -->
+<div id="ModalLoginForm" class="modal fade">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Войти в сервис</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form role="form" method="POST" id="login-form">
+          {% csrf_token %}
+          <input type="hidden" name="_token" value="">
+          <div class="form-group">
+            <label class="control-label">Логин</label>
+            <div class="mt-2">
+              {{form_dict.login_form.email}}
+            </div>
+          </div>
+          <div class="mt-4">
+            <div class="form-group">
+              <label class="control-label">Пароль</label>
+              <div class="mt-2">
+                {{form_dict.login_form.password}}
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="mt-4">
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" name="remember"> Запомнить меня
+                </label>
+              </div>
+            </div>
+          </div>
+          {% if login_error != "" %}
+          <div class="form-group">
+            <div class="mt-4">
+              <label class="control-label" style="color:red; font-weight:bold;"> {{login_error}}</label>
+            </div>
+          </div>
+          {% endif %}
+          <div class="form-group">
+            <div class="mt-4">
+              <button type="submit" class="btn btn-success">Авторизоваться</button>
+              <button type="button" class="btn btn-light" style="margin-left: 26%;" data-bs-toggle="modal"
+                data-bs-target="#ModalRegistrationForm" data-bs-dismiss="modal" id="to-registration-button";>
+                <div>Первый раз в сервисе?</div>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if login_error %}
+<script>
+  var button = document.getElementById("entry-button");
+  button.click();
+</script>
+{% endif %}
+
+<!-- Modal HTML Markup -->
+<div id="ModalRegistrationForm" class="modal fade">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title">Регистрация в сервисе</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        </form>
+        <form role="form" method="POST">
+          {% csrf_token %}
+          <input type="hidden" name="_token" value="">
+          <div class="form-group">
+            <label class="control-label">Имя</label>
+            <div class="mt-2">
+              {{form_dict.registration_form.name}}
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="mt-4">
+              <label class="control-label">Фамилия</label>
+              <div class="mt-2">
+                {{form_dict.registration_form.surname}}
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="mt-4">
+              <label class="control-label">Отчество</label>
+              <div class="mt-2">
+                {{form_dict.registration_form.lastname}}
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="mt-4">
+              <label class="control-label">Пол</label>
+              <div class="mt-2">
+                <div class="radio">
+                  {{form_dict.registration_form.sex}}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="mt-4">
+              <label class="control-label">Дата рождения</label>
+              <div class="mt-2">
+                {{form_dict.registration_form.birthdate}}
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="mt-4">
+              <label class="control-label">Адрес электронной почты</label>
+              <div class="mt-2">
+                {{form_dict.registration_form.email}}
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="mt-4">
+              <label class="control-label">Пароль</label>
+              <div class="mt-2">
+                {{form_dict.registration_form.password}}
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="mt-4">
+              <label class="control-label">Подтвердите пароль</label>
+              <div class="mt-2">
+                {{form_dict.registration_form.password_confirmation}}
+              </div>
+            </div>
+          </div>
+          {% if registration_error != "" %}
+            <div class="form-group">
+              <div class="mt-4">
+                <label class="control-label" style="color:red; font-weight:bold;"> {{registration_error}}</label>
+              </div>
+            </div>
+          {% endif %}
+          <div class="form-group">
+            <div class="mt-4">
+              <button type="submit" class="btn btn-success">Зарегистрироваться</button>
+              <button type="button" class="btn btn-light" style="margin-left: 28%;" data-bs-toggle="modal"
+                data-bs-target="#ModalLoginForm" data-bs-dismiss="modal" ;>
+                <div>Обратно к логину</div>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if registration_error %}
+<script>
+  var button = document.getElementById("to-registration-button");
+  button.click();
+</script>
+{% endif %}

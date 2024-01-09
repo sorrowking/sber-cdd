@@ -1,0 +1,36 @@
+{% extends 'staff/choose_category.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container">
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Когда создан</th>
+          <th>Заказ сделал</th>
+          <th>В кафе</th>
+          <th>Столик</th>
+          <th>Бронь столика</th>
+          <th>Подтвердить оформление</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in orders %}
+        <tr>
+          <td>{{ order.id }}</td>
+          <td>{{ order.created }}</td>
+          <td>{{ order.profile.email }}</td>
+          <td>{{ order.in_cafe }}</td>
+          <td>{{ order.table.number }}</td>
+          <td>{{ order.reserve_time }}</td>
+          <td> <a href="{% url 'staff:order_is_applied' order.id %}" style="width: 100%; font-size: 10pt;" 
+            class="btn btn-outline-danger btn-block btn-lg">Оформить</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

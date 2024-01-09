@@ -1,0 +1,119 @@
+{% load static %}
+<!-- Modal HTML Markup -->
+
+<div id="TableOccupation" class="modal fade">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Выбор столика</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="row">
+          <ul class="table-showcase">
+            <li>
+              <div class="table-seat"></div>
+              <small>Доступные</small>
+            </li>
+            <li>
+              <div class="table-seat" style="background-color: var(--table-selected-color);"></div>
+              <small>Выбранный</small>
+            </li>
+            <li>
+              <div class="table-seat occupied"></div>
+              <small>Занятые</small>
+            </li>
+          </ul>
+          <select class="form-select" id="time-period">
+            <option value="" selected disabled hidden>Выбрать время</option>
+            {% for period in time_periods %}
+              <option value="{{period}}">{{period}}</option>
+            {% endfor %}
+          </select>
+          <div class="form-row">  <div class="col">Номер стола</div>
+
+          <script>
+            document.getElementById('time-period').addEventListener('change', function() {
+              document.getElementById("selectedTableNum").value = "";
+              document.getElementById("selectedTableId").value = "";
+              var selectedTime = this.value;
+              var xhr = new XMLHttpRequest();
+              xhr.open('GET', '/tables_by_time/?selectedTime=' + selectedTime, true);
+              xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                  if (xhr.status === 200) {
+                    var tables = document.querySelectorAll('.table-container .table-seat');
+                    var table_statuses = JSON.parse(xhr.responseText).tables;
+                    for (var i = 0; i < tables.length; i++) {
+                      if (!tables[i].classList.contains('hidden')) {
+                        if (tables[i].classList.contains('occupied') && table_statuses[i] == "") {
+                          tables[i].classList.remove('occupied');
+                        }
+                        else if (!tables[i].classList.contains('occupied') && table_statuses[i] == "occupied") {
+                          tables[i].classList.add('occupied');
+
+                        }
+                      }
+                    }
+                    document.querySelector('.table-container .table-seat.selected').classList.remove('selected');
+                  } else {
+                    console.error('Failed to retrieve Table object');
+                  }
+                }
+              };
+              xhr.send();
+            });
+          </script>
+
+            <div class="col"><input class="cool-input" id="selectedTableNum" type="number" readonly/></div>
+          </div>
+          <input class="form-control" id="selectedTableId" type="number"  hidden/>
+          <div class="table-container">
+            {% for row in cafeteria.rows|get_natural_range %}
+              
+              <div class="row">
+                {% for table in tables %}
+                  {% if table.row == row and not table.hidden%}
+                      <div class="table-seat" data-value="{{table.number}}" data-id="{{table.id}}"></div>
+                  {% elif table.row == row %}
+                    <div class="table-seat hidden"></div>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            {% endfor %}
+          </div>
+          
+          <button class="btn btn-success" id="tableSeatSelect" onclick="updateResults()" data-bs-dismiss="modal"> Подтвердить выбор </button>
+          <script>
+            function updateResults() {
+              var seatId = document.getElementById("selectedTableId").value;
+              var order_time = document.getElementById("time-period").value;
+              var xhr = new XMLHttpRequest();
+              xhr.open('GET', '/get_table/?seatId=' + seatId, true);
+              xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                  if (xhr.status === 200) {
+                    var tableObject = JSON.parse(xhr.responseText);
+                    document.getElementById('chosenTableNumber').value = tableObject.number;
+                    document.getElementById('chosenTableId').value = tableObject.id;
+                    document.getElementById('chosenTableTime').value = order_time
+                  } else {
+                    console.error('Failed to retrieve Table object');
+                  }
+                }
+              };
+              xhr.send();
+            }
+
+          </script>
+
+          <script src="{% static 'js\table-reserve.js' %}"></script>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

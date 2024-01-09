@@ -1,0 +1,98 @@
+{% load static %}
+<!-- Modal -->
+<div id="orderConfirm" class="modal fade">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+          <h5 class="modal-title">Подтверждение заказа</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+      </div>
+
+      <script>
+        
+        function toggleActiveState(button) {
+          document.getElementById('occupy-button').classList.add('hidden')
+          // Удаляем класс активности у всех кнопок
+          var buttons = document.getElementsByClassName('btn');
+          for (var i = 0; i < buttons.length; i++) {
+            buttons[i].classList.remove('btn-active');
+            // Добавляем класс неактивности ко всем кнопкам
+            buttons[i].classList.add('btn-inactive');
+          }
+        
+          // Добавляем класс активности только кнопке, которая была нажата
+          button.classList.remove('btn-inactive');
+          button.classList.add('btn-active');
+        }
+
+        function makeTablesVisible() {
+          document.getElementById('occupy-button').hidden=false;
+          document.getElementById('chosenTableNumber').hidden=false;
+          document.getElementById('chosenTableTime').hidden=false;
+          
+        }
+        function makeTablesHidden() {
+          document.getElementById('chosenTableId').value=0;
+          document.getElementById('occupy-button').hidden=true;
+          document.getElementById('chosenTableNumber').hidden=true;
+          document.getElementById('chosenTableTime').hidden=true;
+        }
+      </script>
+      <style>
+        .btn-active {
+        background-color: green;
+        color: white;
+        }   
+      </style>
+      
+
+
+      <div class="page-header">
+        Заказ
+      </div>
+      <li class="list-group-item active"><div class="total-cost"> Общая стоимость: {{ cart.get_total_price }} ₽</div></li>
+      <div class="container-placement">
+        <button type="button" class="btn btn-outline-success btn-block" onclick="toggleActiveState(this);makeTablesVisible()" style="margin-right: 15%;">
+          Забронировать столик
+        </button>
+        <button type="button" class="btn btn-outline-success btn-block" onclick="toggleActiveState(this);makeTablesHidden()">
+          Забрать с собой
+        </button>
+      </div>
+      <form role="form" method="POST" action="{% url "orders:order_create" %}" id="apply-form">
+        {% csrf_token %}
+        <div class="container-placement"> 
+          <button type="button" class="btn btn-outline-info btn-block" data-bs-toggle="modal"
+            data-bs-target="#TableOccupation" id="occupy-button" style="margin-right: 5%; font-size: 14pt;" hidden>
+            <div>Выбрать столик</div>
+          </button>
+          <input class="cool-input" type="number" id="chosenTableId" name="chosenTableId" value="0" hidden>
+          <input class="cool-input" type="number" id="chosenTableNumber" name="chosenTableNumber" placeholder="Номер" hidden readonly>
+          <input class="cool-input" type="time" id="chosenTableTime" name="chosenTableTime" style="margin-left: 5%;" hidden readonly>
+        </div>
+        <div class="col p-2">
+          <button type="submit" class="btn btn-outline-warning btn-block btn-lg">Оформить заказ</button>
+        </div>
+      </form>
+      <button class="btn btn-warning btn-block" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+        <div class="check-title">Показать чек</div>
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+        {% if business is None %}
+          {% for item in cart %}
+            <li><div class="dropdown-item" >{{ item.quantity }} x {{ item.product.name }} {{ item.total_price }} ₽</div></li>
+          {% endfor %}
+        {% else %}
+          {% for item in cart %}
+            <li><div class="dropdown-item" >{{ item.name }}</div></li>
+          {% endfor %}
+        {% endif %}
+      </ul>
+                
+    </div>
+  </div>
+</div>
+
+{% include 'shop\product\table_occupation.html'%}

@@ -1,0 +1,28 @@
+<div id="NotAuthorized" class="modal fade">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Предупреждение</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+      </div>
+      <div class="modal-body">
+        <div class="modal-description-title">
+          {% if not user.is_authenticated %} 
+          Для использования функций требуется авторизация
+          {% else %}
+          Меню будет доступно со следующей недели
+          {% endif %}
+        </div>
+        <div class="btn-warning_not-auth">
+          {% if not user.is_authenticated %} 
+          <button type="button" class="btn btn-warning" data-bs-toggle="modal"
+            data-bs-target="#ModalLoginForm" data-bs-dismiss="modal" ;>
+          <div>К авторизации</div>
+          </button>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

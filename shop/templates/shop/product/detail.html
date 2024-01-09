@@ -1,0 +1,64 @@
+{% load static %}
+<div id="{{ product.slug }}--form" class="modal fade">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">       
+      <div class="modal-header">
+        <h4 class="modal-title">Добавить в корзину</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+      </div>
+      <div class="modal-body">
+        <div id="{{ product.slug }}-btn">
+          <div class="row">  
+            <script>
+              function increaseValue(inputId) {
+                var currentValue = parseInt(document.getElementById(inputId).value);
+                document.getElementById(inputId).value = currentValue + 1;
+              }
+          
+              function decreaseValue(inputId) {
+                var currentValue = parseInt(document.getElementById(inputId).value);
+                if (currentValue > 1) {
+                  document.getElementById(inputId).value = currentValue - 1;
+                }
+
+              }
+            </script>
+
+            <img src="{{ product.image.url }}" alt="" style="width: 100%">
+            <div class="modal-name-of-product-title">{{ product.name }}
+              {{product.star_rating}}
+              <img src="{% static 'admin\img\star.svg' %}"/>
+            </div>
+              
+            <h6 style="border: 0px;">Цена</h6>
+            <div class="modal-price-title">
+              {{ product.price }} ₽ 
+            </div>
+            <div class="modal-description-title">
+              {{ product.description | safe }}
+            </div>
+            <form action="{% url "cart:cart_add" product.id category_slug %}" method="post">
+              {% csrf_token %}
+              <div class="btn-cart-change-value-line">
+                <button class="btn btn-success" onclick="decreaseValue('{{ product.slug }}-to-cart');return false;">-</button>
+                <input type="number" id="{{ product.slug }}-to-cart" name="quantity" value="1">
+                <button class="btn btn-success" onclick="increaseValue('{{ product.slug }}-to-cart');return false;">+</button>
+              </div>
+              <div class="col p-2">
+                {% if user.is_authenticated and week != 2 and week != 3 %}
+                  <input type="submit" value="Добавить в корзину" class="btn btn-outline-success btn-block btn-lg">
+                {% else %}
+                  <button type="button" data-bs-toggle="modal" data-bs-target="#NotAuthorized" 
+                  data-bs-dismiss="modal" class="btn btn-outline-success btn-block btn-lg" ;>
+                  <div>Добавить в корзину</div>
+                  </button>
+                {% endif %}
+              </div>
+            </form> 
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<div id="content" class="p-4 p-md-5">
+    <div class="album py-5">
+        <div class="container">
+            <div class="row" style="margin-top: 6%">
+                <div class="col-md-8 col-md-offset-2">
+                    <h3 class="page-header">Приятного аппетита, {{ profile.name }}!</h3>
+                    <p>Ваш заказ оформлен. Номер заказа <strong>{{ order.id }}</strong>.</p>
+                    <p>Ваш рейтинг<strong>{{ profile.rating }}</strong>.</p>
+                    {% if qr_image %}
+                    <p>QR код для оплаты:</p>
+                    <img src="/media/qr/{{ order.id }}.png">
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

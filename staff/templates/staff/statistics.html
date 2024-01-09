@@ -1,0 +1,60 @@
+{% extends 'staff/choose_category.html' %}
+{% load static %}
+{% block content %}
+<div class="container">
+  <div class="col">
+    <p class="text-primary" style="margin-top: 1%;"> Категория: </p>
+    <a href="{% url 'staff:statistics' category=0 day_time=cur_day_time %}" 
+    class="btn btn-light {% if cur_category == 0 %} active {% endif %}" style="margin: 5px;">
+      <div class="main-menu-categories-title">Все</div>
+    </a>
+    {% for category in categories %}
+    <a href="{% url 'staff:statistics' category=category.id day_time=cur_day_time %}" 
+      class="btn btn-light {% if cur_category == category.id %} active {% endif %}" style="margin: 5px;">
+      <div class="main-menu-categories-title">{{ category.name }}</div>
+    </a>
+    {% endfor %}
+  </div>
+  <div class="col">
+    <p class="text-primary" style="margin-top: 1%;"> Сортировка по числу продаж: </p>
+    {% for ind, name in day_times %}
+      <a href="{% url 'staff:statistics' category=cur_category day_time=ind %}" 
+      class="btn btn-light {% if cur_day_time == ind %} active {% endif %}" style="margin: 5px;">
+        <div class="main-menu-categories-title">{{ name }}</div>
+      </a>
+    {% endfor %}
+  <div>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Назввание</th>
+          <th scope="col">Цена</th>
+          <th scope="col">Категория</th>
+          <th scope="col">Кол-во покупок утром</th>
+          <th scope="col">Кол-во покупок днём</th>
+          <th scope="col">Кол-во покупок вечером</th>
+          <th scope="col">Итого</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for stat in statistics %}
+        {% with product=stat.product %}
+        <tr>
+          <td>{{ product.id }}</td>
+          <td>{{ product.name }}</td>
+          <td>{{ product.price }}₽</td>
+          <td>{{ product.category.name }}</td>
+          <td>{{ stat.morning }}</td>
+          <td>{{ stat.afternoon }}</td>
+          <td>{{ stat.evening }}</td>
+          <td>{{ stat.total }}</td>
+        </tr>
+        {% endwith %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

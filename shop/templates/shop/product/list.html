@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<div class="container">
+  <selection class="free-or-lunch">
+    <a class="btn btn-light free-menu" href="{% url 'shop:product_list' %}">
+      Свободное меню
+    </a>
+    <a class="btn btn-light free-menu" href="{% url 'shop:lunch' day=1%} ">
+      Бизнес ланч
+    </a>
+  </selection>
+  <selection class="week-choice">
+    <a class="btn btn-outline-success m-2 {% if week == 1 %} active {% endif %}" href="{{ week_url }}1" id="first_week">
+      На эту неделю
+    </a>
+    <label for="first_week">{{tuesdays.last}}-{{tuesdays.next}}</label>
+    <a class="btn btn-outline-success m-2 {% if week == 2 %} active {% endif %}" href="{{ week_url }}2" id="second_week">
+      На след. неделю
+    </a>
+    <label for="second_week">{{tuesdays.next}}-{{tuesdays.nextnext}}</label>
+    <a class="btn btn-outline-success m-2 {% if week == 3 %} active {% endif %}" href="{{ week_url }}3" id="third_week">
+      На послеслед. неделю
+    </a>
+    <label for="third_week">{{tuesdays.nextnext}}-...</label>
+  </selection>
+  <a href="/all/{{week}}" class="btn btn-light {% if category.slug is None %} active {% endif %}" style="margin: 5px;">
+    <div class="main-menu-categories-title">Все</div>
+  </a>
+  {% for cat in categories %}
+  <a href="/{{cat.slug}}/{{week}}" class="btn btn-light {% if cat.slug == category.slug %} active {% endif %}" style="margin: 5px;">
+    <div class="main-menu-categories-title">{{ cat.name }}</div>
+  </a>
+  {% endfor %}
+  <selection>
+    <div class="food-map">
+      <div class="cart-widget">
+        {% with total_items=cart|length %}
+        {% if user.is_authenticated %}
+        {% if cart|length > 0 %}
+        <a class="btn btn-outline-success btn-block btn-lg" style="margin-right: 10px;" href="{% url 'cart:cart_detail' %}" >
+           <span class="cart-items-count">Корзина: {{ total_items }}</span>
+        </a>
+        {% else %}
+        <a class="btn btn-outline-warning btn-block btn-lg" href="{% url 'cart:cart_detail' %}" style="margin-right: 10px;">
+          <span class="cart-items-count">Корзина пуста</span>
+        </a>
+        {% endif %}
+        <div class="second-week">
+          <a class="btn btn-outline-success btn-block btn-lg" href="{% url 'cart:user_order' %}">
+            <span class="cart-items-count">Заказы</span>
+          </a>
+        </div>
+        {% endif %}
+        {% endwith %}
+    </div>
+      <div id="buy-content">
+          <div class="row">
+            {% for product in products %}
+            {% include 'shop\product\detail.html'%}
+            {% include 'shop\product\more_about.html'%}
+              <div class="col-md-4">
+                <div class="card mb-4 shadow-sm">
+                  <img class="card-img-top" src="{{product.image.url }}" style="--size: 250px; aspect-ratio: 1.00; width: var(--size); margin: auto; display: block;" alt="изображение продукта">
+                  <div class="card-body">
+                    <h5 class="card-title">{{product.name}}</h5>
+                    <h6 class="card_price">{{product.price}} ₽</h6>
+                  <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                    data-bs-target="#{{ product.slug }}-more-about-form" id="{{ product.slug }}-more-about-btn" ;>
+                    <div class="user-login">Подробнее</div>
+                  </button>
+                  <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                    data-bs-target="#{{ product.slug }}--form" id="{{ product.slug }}-btn" ;>
+                  <div class="user-login">+</div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+    </div>
+  </selection>
+  <footer class="bg-body-tertiary text-center" style="margin-top: 50px;">
+    <!-- Copyright -->
+    <div class="text-center p-3">
+      © СберКафе:
+      <div class="text-body">Забайкальский край 2023</div>
+    </div>
+    <!-- Copyright -->
+</footer>
+</div>
+{% endblock %}
+
+

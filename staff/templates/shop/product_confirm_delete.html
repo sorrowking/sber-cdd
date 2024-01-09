@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm Deletion</title>
+</head>
+
+<body>
+    <h1>Confirm deletion</h1>
+    <p>Are you sure you want to delete the product "{{ product.name }}"?</p>
+
+    <form method="post" action=<a href="{% url 'shop:product_detail' id=product.id slug=product.slug %}">Cancel</a>">
+        {% csrf_token %}
+        <input type="submit" value="Confirm">
+    </form>
+
+    <a href="{% url 'shop:product_detail' id=product.id slug=product.slug %}">Cancel</a>
+</body>
+
+</html>
